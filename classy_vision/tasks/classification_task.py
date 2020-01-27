@@ -371,16 +371,20 @@ class ClassificationTask(ClassyTask):
         generated, if this is a training run, then x phases = x train
         phases + x test phases, interleaved.
         """
-        if not self.test_only:
-            phases = [{"train": True} for _ in range(self.num_epochs)]
+        if self.test_only:
+            # just create one test phase
+            return [{"train": False}]
 
-            final_phases = []
-            for phase in phases:
-                final_phases.append(phase)
-                final_phases.append({"train": False})
-            return final_phases
-
-        return [{"train": False} for _ in range(self.num_epochs)]
+        phases = []
+        for i in range(self.num_epochs):
+            phases.append({"train": True})
+            if (i + 1) % 5 == 0:
+                # append a test phase after self.test_phase_period train phases
+                phases.append({"train": False})
+        # if the last phase is not a test phase, add a test phase
+        if not phases or phases[-1]["train"]:
+            phases.append({"train": False})
+        return phases
 
     def build_dataloader(
         self,

@@ -7,6 +7,7 @@
 
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
+from classy_vision.hooks.loss_lr_meter_logging_hook import LossLrMeterLoggingHook
 
 
 class ClassyTask(ABC):
@@ -152,5 +153,9 @@ class ClassyTask(ABC):
             :class:`classy_vision.hooks.ClassyHookFunctions`
                 enum.
         """
+        meter = None
         for hook in self.hooks:
-            getattr(hook, hook_function)(self, local_variables)
+            if isinstance(hook, LossLrMeterLoggingHook) and "end" in hook_function:
+                meter = getattr(hook, hook_function)(self, local_variables)
+                print("hook meter", meter)
+        return meter

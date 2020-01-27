@@ -19,6 +19,9 @@ def add_generic_args(parser):
         "--config_file", type=str, help="path to config file for model", required=True
     )
     parser.add_argument(
+        "--model_config", type=str, help="model signature", required=True
+    )
+    parser.add_argument(
         "--device",
         default=None,
         type=str,

@@ -178,4 +178,5 @@ def init_distributed_data_parallel_model(model, broadcast_buffers=False):
             device_ids=[_cuda_device_index],
             output_device=_cuda_device_index,
             broadcast_buffers=broadcast_buffers,
+            find_unused_parameters=True
         )

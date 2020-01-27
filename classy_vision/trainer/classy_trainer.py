@@ -73,7 +73,8 @@ class ClassyTrainer:
 
         local_variables = {}
         task.run_hooks(local_variables, ClassyHookFunctions.on_start.name)
-
+        best_acc = {'top1_acc': 0, 'top1_epoch': 0, 'top5_acc': 0, 'top5_epoch': 0}
+        epoch = 0
         while not task.done_training():
             task.advance_phase()
 
@@ -91,6 +92,14 @@ class ClassyTrainer:
                 meter.sync_state()
             logging.info("...meters synced")
             barrier()
-            task.run_hooks(local_variables, ClassyHookFunctions.on_phase_end.name)
+            meter = task.run_hooks(local_variables, ClassyHookFunctions.on_phase_end.name)
+            if meter is not None:
+                if meter[0].value['top_1'] > best_acc['top1_acc']:
+                    best_acc['top1_acc'] = meter[0].value['top_1']
+                    best_acc['top5_acc'] = meter[0].value['top_5']
+                    best_acc['top1_epoch'] = epoch
+                    best_acc['top5_epoch'] = epoch
+            epoch += 1
 
         task.run_hooks(local_variables, ClassyHookFunctions.on_end.name)
+        return best_acc

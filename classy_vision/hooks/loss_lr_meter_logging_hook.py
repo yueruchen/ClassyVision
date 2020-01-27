@@ -58,9 +58,13 @@ class LossLrMeterLoggingHook(ClassyHook):
             # trainer to implement an unsynced end of phase meter or
             # for meters to not provide a sync function.
             logging.info("End of phase metric values:")
-            self._log_loss_meters(task, local_variables)
+            meter = self._log_loss_meters(task, local_variables)
             if task.train:
                 self._log_lr(task, local_variables)
+            if not task.train:
+                return meter
+            else:
+                return None
 
     def on_update(
         self, task: "tasks.ClassyTask", local_variables: Dict[str, Any]
