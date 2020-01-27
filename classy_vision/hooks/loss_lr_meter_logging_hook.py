@@ -108,6 +108,9 @@ class LossLrMeterLoggingHook(ClassyHook):
             "{} loss: {}".format(phase_type, loss),
             "Meters:",
         ]
+        acc = []
         for meter in task.meters:
             log_strs.append("{}".format(meter))
+            acc.append(meter)
         logging.info("\n".join(log_strs))
+        return acc
