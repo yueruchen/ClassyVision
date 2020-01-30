@@ -22,6 +22,9 @@ def add_generic_args(parser):
         "--model_config", type=str, help="model signature", required=True
     )
     parser.add_argument(
+        "--model_name", type=str, help="model signature", required=True
+    )
+    parser.add_argument(
         "--device",
         default=None,
         type=str,
